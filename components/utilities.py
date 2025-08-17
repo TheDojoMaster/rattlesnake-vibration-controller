@@ -568,7 +568,7 @@ def flush_queue(queue,timeout=None):
                 data.append(queue.get('Flush',block = False if timeout is None else True,timeout=timeout))
             else:
                 data.append(queue.get(block = False if timeout is None else True,timeout=timeout))
-        except mp.queues.Empty:
+        except mp_queues.Empty:
             return data
         
 def db2scale(dB):
