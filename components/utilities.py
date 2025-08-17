@@ -54,13 +54,17 @@ def coherence(cpsd_matrix : np.ndarray,row_column : Tuple[int] = None ):
         3D array of coherence values where the [i,j,k] entry corresponds to the
         coherence of the CPSD matrix for the ith frequency line, jth row, and
         kth column.
-    
+
     """
     if row_column is None:
+        # Extract the auto-spectral density for each channel along the diagonal
         diag = np.einsum('ijj->ij',cpsd_matrix)
+        # Apply the definition gamma^2 = |G_xy|^2 / (G_xx * G_yy) for every
+        # frequency line and channel pair
         return np.real(np.abs(cpsd_matrix)**2/(diag[:,:,np.newaxis]*diag[:,np.newaxis,:]))
     else:
         row,column = row_column
+        # Compute coherence for just the selected row/column pair
         return np.real(np.abs(cpsd_matrix[:,row,column])**2/(cpsd_matrix[:,row,row]*cpsd_matrix[:,column,column]))
 
 class Channel:
@@ -582,10 +586,12 @@ def db2scale(dB):
         Value in linear
     
     """
-    return 10**(dB/20)
+    return 10**(dB/20)  # Convert decibel value back to a linear scale factor
 
+# Convert a linear power value to decibels
 power2db = lambda power: 10*np.log10(power)
 
+# Convert a linear amplitude (scale factor) to decibels
 scale2db = lambda scale: 20*np.log10(scale)
 
 def rms_time(signal,axis=None,keepdims=False):
